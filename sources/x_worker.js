@@ -13,6 +13,12 @@ function xWorker(name, spawn, memory) {
         body = [Game.MOVE, Game.WORK, Game.WORK, Game.WORK, Game.WORK];
     } else if (memory && _.contains(['builder'], memory.role)) {
         body = [Game.WORK, Game.CARRY, Game.MOVE, Game.CARRY, Game.CARRY];
+    } else if (memory && _.contains(['undertaker'], memory.role)) {
+        // WWWMC 350 / WWMCC 440 with 3 roads distance
+        // WWWMC 1900 / WWMCC 1550 with 10 roads distance
+        body = [Game.WORK, Game.WORK, Game.MOVE, Game.CARRY, Game.CARRY];
+    } else if (memory && _.contains(['repairer'], memory.role)) {
+        body = [Game.WORK, Game.WORK, Game.MOVE, Game.CARRY, Game.CARRY];
     }
     this.__proto__.__proto__.constructor.apply(this, [name, body, spawn, memory]);
 }
@@ -20,18 +26,19 @@ xWorker.prototype.__proto__ = xCreep.prototype;
 
 xWorker.prototype.work = function() {
     var role = this.creep.memory.role;
-    var spawn = Game.spawns[this.creep.memory.spawn];
+    var spawn = Game.spawns.Spawn1;
     var availableSourceIdList = utils.listAvailableSourceId();
     var creep_source = this.creep.memory.source;
     var site = this.creep.pos.findNearest(Game.CONSTRUCTION_SITES);
     var energy_threshold = this.creep.energyCapacity;
+    var spawnThreshold = spawn.energyCapacity * 0.3;
     var dropped_energy = null;
     var miner = null;
     var source = spawn.pos.findNearest(Game.SOURCES);
 
     if (_.contains(['miner'], role)) {
         if (creep_source) {
-            source = utils.getSourceById(creep_source);
+            source = Game.getObjectById(creep_source);
         } else {
             if (Memory.sources.length > 0) {
                 source = spawn.pos.findNearest(Game.SOURCES, {
@@ -59,7 +66,7 @@ xWorker.prototype.work = function() {
         miner = Game.creeps[this.creep.memory.miner];
         if (miner) {
             dropped_energy = miner.pos.findInRange(Game.DROPPED_ENERGY, 2)[0];
-            source = utils.getSourceById(miner.memory.source);
+            source = Game.getObjectById(miner.memory.source);
         }
         if (dropped_energy && this.creep.energy < energy_threshold) {
             this.action = this.recycle(dropped_energy);
@@ -67,7 +74,7 @@ xWorker.prototype.work = function() {
         if (!this.action && spawn.energy < spawn.energyCapacity && this.creep.energy == this.creep.energyCapacity) {
             this.action = this.transferEnergy(spawn);
         }
-        source = utils.getSourceById(miner.memory.source);
+        source = Game.getObjectById(miner.memory.source);
         if (!this.action && source.energy === 0 && source.ticksToRegeneration > Memory.waiting_time) {
             role = 'recycler';
         }
@@ -109,13 +116,19 @@ xWorker.prototype.work = function() {
             this.creep.memory.last_action = 'build';
         }
     }
-    if (_.contains(['extender'], role)) {
+    if (_.contains(['extender', 'undertaker'], role)) {
         miner = Game.creeps[this.creep.memory.miner];
         if (miner) {
-            source = utils.getSourceById(miner.memory.source);
+            source = Game.getObjectById(miner.memory.source);
+        }
+        if (!source || !miner) {
+            source = this.creep.pos.findNearest(Game.SOURCES_ACTIVE);
         }
         if (source.energy === 0 && source.ticksToRegeneration > Memory.waiting_time) {
             source = this.creep.pos.findNearest(Game.SOURCES_ACTIVE);
+        }
+        if (spawn.energy > spawnThreshold) {
+            source = spawn;
         }
         if (!this.action && source && source.energy > 0 && this.creep.energy === 0) {
             this.action = this.harvest(source);
@@ -133,12 +146,24 @@ xWorker.prototype.work = function() {
             this.moveTo(source);
         }
     }
+    if (_.contains(['repairer'], role)) {
+        var struct = utils.findNearestDamagedStructure(this.creep.pos);
+        if (struct && this.creep.energy > 0) {
+            this.action = this.repair(struct);
+        } else if (spawn.energy > spawnThreshold) {
+            this.action = this.takeEnergy(spawn);
+        }
+    }
     this.defaultAction();
 };
 
 xWorker.prototype.harvest = function(source) {
     this.moveTo(source);
-    this.creep.harvest(source);
+    if (source.structureType == 'spawn') {
+        source.transferEnergy(this.creep);
+    } else {
+        this.creep.harvest(source);
+    }
     return 'harvest';
 };
 
@@ -148,9 +173,20 @@ xWorker.prototype.recycle = function(energy) {
     return 'recycle';
 };
 
+xWorker.prototype.repair = function(struct) {
+    this.moveTo(struct);
+    this.creep.repair(struct);
+    return 'repair';
+};
+
 xWorker.prototype.build = function(site) {
-    this.moveTo(site);
-    this.creep.build(site);
+    var build_status = this.creep.build(site);
+    if (build_status == -9) {
+        this.moveTo(site);
+    }
+    if (build_status == -7) {
+        this.moveTo(site.pos.x +1, site.pos.y);
+    }
     return 'build';
 };
 
@@ -166,6 +202,13 @@ xWorker.prototype.transferEnergy = function(spawn) {
         spawn.memory.energy_total += amount;
     }
     return 'transfer';
+};
+
+xWorker.prototype.takeEnergy = function(spawn) {
+    this.moveTo(spawn);
+    spawn.transferEnergy(this.creep);
+
+    return 'provision';
 };
 
 module.exports = xWorker;

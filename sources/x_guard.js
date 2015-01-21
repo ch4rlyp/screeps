@@ -2,6 +2,7 @@
  * Guard class, creep
  */
 var xCreep = require('x_creep');
+var utils = require('utils');
 
 function xGuard(name, spawn, memory) {
     var body = [Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.MOVE];
@@ -21,6 +22,15 @@ function xGuard(name, spawn, memory) {
 xGuard.prototype.__proto__ = xCreep.prototype;
 
 xGuard.prototype.fight = function() {
+    var enemy = this.creep.pos.findInRange(Game.HOSTILE_CREEPS, 1)[0];
+    if (enemy) {
+        var x = enemy.pos.x;
+        var y = enemy.pos.y;
+        var d1 = this.creep.pos.getDirectionTo(enemy);
+        var d2 = this.creep.pos.getDirectionTo(x, y);
+        // console.log("x: " + x + ";y: " + y + ";d1: " + d1 + ";d2: " + d2);
+    }
+
     var spawn = this.creep.pos.findNearest(Game.MY_SPAWNS);
     var is_melee = this.creep.getActiveBodyparts(Game.ATTACK) > 0;
     var is_healer = this.creep.getActiveBodyparts(Game.HEAL) > 0;
@@ -49,7 +59,7 @@ xGuard.prototype.melee_attack = function() {
         } else if (attack == -9) {
             return "target too far";
         } else {
-            this.say("melee attack fail (" + attack + ")")
+            this.say("melee attack fail (" + attack + ")");
             return null;
         }
     }
@@ -59,14 +69,21 @@ xGuard.prototype.melee_attack = function() {
 xGuard.prototype.ranged_attack = function() {
     var target = this.creep.pos.findNearest(Game.HOSTILE_CREEPS);
     if (target) {
-        this.moveTo(target.pos.x+2, target.pos.y+2);
+        var target_direction = this.creep.pos.getDirectionTo(target);
+        if (target_direction >= 1) {
+            this.creep.moveTo(target);
+            // this.creep.move(utils.getOppositeDirection(target_direction));
+        } else {
+            this.creep.moveTo(target);
+        }
+
         var attack = this.creep.rangedAttack(target);
         if (attack === 0) {
             return "range attack " + target.name;
         } else if (attack == -9) {
             return "target too far";
         } else {
-            this.say("range attack fail (" + attack + ")")
+            this.say("range attack fail (" + attack + ")");
             return null;
         }
     }
@@ -82,7 +99,7 @@ xGuard.prototype.mixed_attack = function(target) {
     } else if (attack == -9) {
         return "target too far";
     } else {
-        this.say("attack fail (" + attack + ")")
+        this.say("attack fail (" + attack + ")");
         return null;
     }
 };

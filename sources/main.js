@@ -1,10 +1,19 @@
+/**
+ * TODO LIST:
+ * - While a miner die, the game is broken during the spawn time, and it's not able to return to his own mine.
+ * - Implement level management (level == many objectives, when all objectives are complete, level increase etc...)
+ * - Implement extension management (Build)
+ */
+
 var _ = require('lodash');
+var init_mode = require('init_mode');
 var xWorker = require('x_worker');
 var xGuard = require('x_guard');
 
 /**
  *  Init Memory
  */
+if (!Memory.chrono) Memory.chrono = 0;
 if (!Memory.debug) Memory.debug = false;
 if (!Memory.sources) Memory.sources = [];
 if (!Memory.base) Memory.base = "Spawn1";
@@ -25,49 +34,11 @@ _(Game.spawns).forEach(function(spawn) {
     }
 });
 
-var spawn = Game.spawns.Spawn1;
-// First mine groupe
-new xWorker('w1_m1', spawn, {"type": "worker", "role": 'miner'});
-new xWorker('w1_c1', spawn, {"type": "worker", "role": 'carrier', "miner": "w1_m1"});
-// First guard group
-new xGuard('g1_l', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
-new xWorker('g1_r', spawn, {"type": "worker", "role": 'recycler', "flag": "Flag1"});
-// Second mine group
-new xWorker('w2_m1', spawn, {"type": "worker", "role": 'miner',});
-// Add healer to first group
-new xGuard('g1_h', spawn, {"type": "guard", "role": 'support', "flag": "Flag2"});
-// Add carrier to mine 2
-new xWorker('w2_c1', spawn, {"type": "worker", "role": 'carrier', "miner": "w2_m1"});
-// Add new guard to g1
-new xGuard('g1_m1', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1", "leader": "g1_l"});
-// Third mine group
-new xWorker('w3_m1', spawn, {"type": "worker", "role": 'miner'});
-new xWorker('w3_c1', spawn, {"type": "worker", "role": 'carrier', "miner": "w3_m1"});
-// Add new guard to g1
-new xGuard('g1_m2', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1", "leader": "g1_l"});
-// Add a second recycler to mine 2
-// new xWorker('w2_c2', spawn, {"type": "worker", "role": 'carrier', "miner": "w2_m1"});
-// Second Guard group
-new xGuard('g2_l', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
-// Second builder
-// new xWorker('b2', spawn, {"type": "worker", "role": 'builder', "flag": "Flag1"});
-// Add new recycler to mine 3
-new xWorker('w3_c2', spawn, {"type": "worker", "role": 'carrier', "miner": "w3_m1"});
-// Add guard to second guard group
-new xWorker('g2', spawn, {"type": "worker", "role": 'recycler', "flag": "Flag1"});
-new xGuard('g2_h', spawn, {"type": "guard", "role": 'support', "flag": "Flag2"});
-new xGuard('g2_m1', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1", "leader": "g2_l"});
-// Add guard to second guard group
-new xWorker('g3', spawn, {"type": "worker", "role": 'recycler', "flag": "Flag1"});
-new xGuard('g2_m2', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1", "leader": "g2_l"});
-// Third guard group
-new xGuard('g3_l', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
-new xGuard('g3_h', spawn, {"type": "guard", "role": 'support', "flag": "Flag2"});
-new xWorker('g4', spawn, {"type": "worker", "role": 'recycler', "flag": "Flag1"});
-new xGuard('g3_m1', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1", "leader": "g3_l"});
-new xGuard('g3_m2', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1", "leader": "g3_l"});
-// First builder
-new xWorker('b1', spawn, {"type": "worker", "role": 'builder', "flag": "Flag1"});
+/**
+ * Init creep
+ * available mode : sim1, sim2, sim3
+ */
+init_mode('sim2');
 
 /**
  * Manage creep spawns
@@ -91,3 +62,5 @@ if (Game.time !== 0 && Game.time % 60 === 0) {
         console.log(spawn.name + " Wave n°" + n_wave + ": " + spawn.memory.energy_total + " accumulated");
     });
 }
+
+Memory.chrono++;

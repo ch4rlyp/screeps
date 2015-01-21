@@ -2,16 +2,7 @@
  * Creep class extend
  */
 var _ = require('lodash');
-
-var body_part_prices = {
-    'move': 50,
-    'work': 20,
-    'carry': 50,
-    'attack': 100,
-    'ranged_attack': 150,
-    'heal': 200,
-    'tough': 5
-};
+var utils = require('utils');
 
 function xCreep(name, body, spawn, memory) {
     this.name = name;
@@ -21,10 +12,15 @@ function xCreep(name, body, spawn, memory) {
         this.creep = creep;
         this.role = creep.memory.role;
     } else if (!spawn.memory.working) {
-        memory.spawn = spawn.name;
-        memory.last_action = null;
+        if (Memory.creeps[name]) {
+
+        } else {
+            memory.spawn = spawn.name;
+            memory.last_action = null;
+            memory.level = 0;
+        }
+
         this.creep = this.spawnCreep(name, body, memory);
-        this.role = memory.role;
     }
     this.action = null;
 }
@@ -44,7 +40,7 @@ xCreep.prototype.getPrice = function() {
 
 xCreep.prototype.computePrice = function(body) {
     var creep_price = 0;
-    _.forEach(body, function(part) { creep_price += body_part_prices[part]; });
+    _.forEach(body, function(part) { creep_price += utils.getBodyPartCost(part); });
     this.creep_price = creep_price;
 };
 
@@ -106,6 +102,10 @@ xCreep.prototype.moveToFlag = function() {
 
 xCreep.prototype.moveToBase = function() {
     this.moveTo(this.spawn);
+};
+
+xCreep.prototype.getRange = function(target) {
+    return utils.getRange(this.creep.pos, target.pos);
 };
 
 module.exports = xCreep;
