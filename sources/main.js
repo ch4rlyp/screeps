@@ -3,6 +3,7 @@
  * - While a miner die, the game is broken during the spawn time, and it's not able to return to his own mine.
  * - Implement level management (level == many objectives, when all objectives are complete, level increase etc...)
  * - Implement extension management (Build)
+ * - Improve CPU use
  */
 
 var _ = require('lodash');
@@ -44,12 +45,12 @@ init_mode('sim2');
  * Manage creep spawns
  */
 _(Game.creeps).forEach(function(creep) {
-    if (creep.memory.type == "worker") {
-        var worker = new xWorker(creep.name);
-        worker.work();
-    } else if (creep.memory.type == "guard") {
+    if (creep.memory.type == "guard") {
         var guard = new xGuard(creep.name);
         guard.fight();
+    } else if (creep.memory.type == "worker") {
+        var worker = new xWorker(creep.name);
+        worker.work();
     }
 });
 

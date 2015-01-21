@@ -28,9 +28,9 @@ function xCreep(name, body, spawn, memory) {
 xCreep.prototype.spawnCreep = function(name, body, memory) {
     var status = this.spawn.createCreep(body, name, memory);
     this.computePrice(body);
-    if (status == name) {
-        console.log('A new ' + memory.role + ' is in creation progress, price: ' +  this.creep_price);
-    }
+    // if (status == name) {
+    //     console.log('A new ' + memory.role + ' is in creation progress, price: ' +  this.creep_price);
+    // }
     this.spawn.memory.working = true;
 };
 
@@ -75,14 +75,22 @@ xCreep.prototype.defaultAction = function(message) {
 };
 
 xCreep.prototype.moveTo = function(x, y) {
-    if (y === undefined) {
-        this.creep.moveTo(x);
-        return "walk to " + x;
+    if (x && y === undefined) {
+        var fromPos = this.creep.pos;
+        var toPos = x.pos;
+        var path = this.creep.room.findPath(fromPos, toPos, { maxOps: 200 });
+        if (!path.length || !toPos.equalsTo(path[path.length - 1])) {
+            path = this.creep.room.findPath(
+                fromPos,
+                toPos,
+                { maxOps: 1000, ignoreDestructibleStructures: true });
+        }
+        if (path.length) {
+            this.creep.move(path[0].direction);
+        }
     } else {
         this.creep.moveTo(x, y);
-        return "walk to " + x + "/y";
     }
-
 };
 
 xCreep.prototype.followLeader = function() {

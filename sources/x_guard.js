@@ -52,7 +52,7 @@ xGuard.prototype.fight = function() {
 xGuard.prototype.melee_attack = function() {
     var target = this.creep.pos.findNearest(Game.HOSTILE_CREEPS);
     if (target) {
-        this.moveTo(target.pos);
+        this.moveTo(target);
         var attack = this.creep.attack(target);
         if (attack === 0) {
             return "melee attack " + target.name;
@@ -71,8 +71,7 @@ xGuard.prototype.ranged_attack = function() {
     if (target) {
         var target_direction = this.creep.pos.getDirectionTo(target);
         if (target_direction >= 1) {
-            this.creep.moveTo(target);
-            // this.creep.move(utils.getOppositeDirection(target_direction));
+            this.creep.move(utils.getOppositeDirection(target_direction));
         } else {
             this.creep.moveTo(target);
         }
@@ -91,7 +90,7 @@ xGuard.prototype.ranged_attack = function() {
 };
 
 xGuard.prototype.mixed_attack = function(target) {
-    this.moveTo(target.pos, target.pos);
+    this.moveTo(target);
     var attack = this.creep.attack(target);
     attack = this.creep.rangedAttack(target);
     if (attack === 0) {

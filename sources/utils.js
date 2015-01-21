@@ -44,7 +44,7 @@ exports.getOppositeDirection = function(direction) {
     //direction value is between 1 and 8
     var i = 0;
     var oppositeDirection = direction;
-    for (i = 0; i < cars.length; i++) {
+    for (i = 0; i < 4; i++) {
         if (oppositeDirection === 8) {
             oppositeDirection = 1;
         } else {
