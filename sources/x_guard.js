@@ -28,7 +28,6 @@ xGuard.prototype.fight = function() {
         var y = enemy.pos.y;
         var d1 = this.creep.pos.getDirectionTo(enemy);
         var d2 = this.creep.pos.getDirectionTo(x, y);
-        // console.log("x: " + x + ";y: " + y + ";d1: " + d1 + ";d2: " + d2);
     }
 
     var spawn = this.creep.pos.findNearest(Game.MY_SPAWNS);

@@ -14,12 +14,12 @@ var xGuard = require('x_guard');
 /**
  *  Init Memory
  */
-if (!Memory.chrono) Memory.chrono = 0;
-if (!Memory.debug) Memory.debug = false;
-if (!Memory.sources) Memory.sources = [];
-if (!Memory.base) Memory.base = "Spawn1";
-if (!Memory.waiting_time) Memory.waiting_time = 10;
-if (!Memory.flag_radius) Memory.flag_radius = 5;
+if (Memory.chrono === undefined) Memory.chrono = 0;
+if (Memory.debug === undefined) Memory.debug = false;
+if (Memory.sources === undefined) Memory.sources = [];
+if (Memory.base === undefined) Memory.base = "Spawn1";
+if (Memory.waiting_time === undefined) Memory.waiting_time = 10;
+if (Memory.flag_radius === undefined) Memory.flag_radius = 5;
 
 /**
  * Manage spawns
@@ -57,7 +57,7 @@ _(Game.creeps).forEach(function(creep) {
 /**
  * Accumulated energy in order to compare
  */
-if (Game.time !== 0 && Game.time % 60 === 0) {
+if (Memory.debug && Game.time !== 0 && Game.time % 60 === 0) {
     var n_wave = Game.time / 60;
     _(Game.spawns).forEach(function(spawn) {
         console.log(spawn.name + " Wave n°" + n_wave + ": " + spawn.memory.energy_total + " accumulated");

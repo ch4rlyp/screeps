@@ -28,9 +28,9 @@ function xCreep(name, body, spawn, memory) {
 xCreep.prototype.spawnCreep = function(name, body, memory) {
     var status = this.spawn.createCreep(body, name, memory);
     this.computePrice(body);
-    // if (status == name) {
-    //     console.log('A new ' + memory.role + ' is in creation progress, price: ' +  this.creep_price);
-    // }
+    if (Memory.debug && status == name) {
+        console.log('A new ' + memory.role + ' is in creation progress, price: ' +  this.creep_price);
+    }
     this.spawn.memory.working = true;
 };
 
@@ -44,7 +44,7 @@ xCreep.prototype.computePrice = function(body) {
     this.creep_price = creep_price;
 };
 
-xCreep.prototype.say = function(message) {
+xCreep.prototype.log = function(message) {
     console.log(this.name + " says: '" + message + "'");
 };
 
@@ -70,7 +70,7 @@ xCreep.prototype.defaultAction = function(message) {
         this.action = 'nothing to do, return to base';
     }
     if (Memory.debug) {
-        this.say(this.action);
+        this.log(this.action);
     }
 };
 
