@@ -59,8 +59,7 @@ xGuard.prototype.melee_attack = function() {
         } else if (attack == -9) {
             return "target too far";
         } else {
-            this.say("melee attack fail (" + attack + ")");
-            return null;
+            return "melee attack fail (" + attack + ")";
         }
     }
     return null;
@@ -82,8 +81,7 @@ xGuard.prototype.ranged_attack = function() {
         } else if (attack == -9) {
             return "target too far";
         } else {
-            this.say("range attack fail (" + attack + ")");
-            return null;
+            return "range attack fail (" + attack + ")";
         }
     }
     return null;
@@ -98,8 +96,7 @@ xGuard.prototype.mixed_attack = function(target) {
     } else if (attack == -9) {
         return "target too far";
     } else {
-        this.say("attack fail (" + attack + ")");
-        return null;
+        return "attack fail (" + attack + ")";
     }
 };
 
