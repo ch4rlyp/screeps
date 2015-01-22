@@ -15,7 +15,7 @@ function xGuard(name, spawn, memory) {
     } else if (memory && memory.role == 'support') {
         body = [Game.MOVE, Game.RANGED_ATTACK, Game.HEAL, Game.HEAL, Game.MOVE];
     } else if (memory && memory.role == 'mixed') {
-        body = [Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.RANGED_ATTACK, Game.MOVE];
+        body = [Game.TOUGH, Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.RANGED_ATTACK, Game.MOVE];
     }
     this.__proto__.__proto__.constructor.apply(this, [name, body, spawn, memory]);
 }
@@ -108,7 +108,7 @@ xGuard.prototype.heal = function() {
             if (ally.hits == ally.hitsMax || ally.id === id) {
                 return false;
             }
-            // if an enemy is here => not heal worker
+            // if an enemy is here => no heal on workers creeps
             if (target && ally.memory.type == 'worker') {
                 return false;
             }
@@ -121,10 +121,14 @@ xGuard.prototype.heal = function() {
         if (heal === 0) {
            return "heal " + damaged_ally.name;
         } else if (heal == -9) {
-            return "target too far";
-        } else {
-            return "heal fail (" + heal + ")";
+            heal = this.creep.rangedHeal(damaged_ally);
+            if (heal === 0) {
+                return "heal " + damaged_ally.name;
+            } else if (heal == -9) {
+                return "target too far";
+            }
         }
+        return "heal fail (" + heal + ")";
     }
     return null;
 };

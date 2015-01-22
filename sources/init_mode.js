@@ -48,18 +48,18 @@ module.exports = function(mode) {
             new xGuard('g2_m1', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag2"});
             new xGuard('g2_m2', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag2"});
 
-            new xGuard('g1_m3', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
-            new xGuard('g1_m4', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
-            new xGuard('g1_h2', spawn, {"type": "guard", "role": 'support', "flag": "Flag1"});
+            // new xGuard('g1_m3', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
+            // new xGuard('g1_m4', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag1"});
+            // new xGuard('g1_h2', spawn, {"type": "guard", "role": 'support', "flag": "Flag1"});
 
-            new xGuard('g2_m3', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag2"});
-            new xGuard('g2_m4', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag2"});
-            new xGuard('g2_h2', spawn, {"type": "guard", "role": 'support', "flag": "Flag2"});
+            // new xGuard('g2_m3', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag2"});
+            // new xGuard('g2_m4', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag2"});
+            // new xGuard('g2_h2', spawn, {"type": "guard", "role": 'support', "flag": "Flag2"});
 
-            new xGuard('g3_l', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag3"});
-            new xGuard('g3_h', spawn, {"type": "guard", "role": 'support', "flag": "Flag3"});
-            new xGuard('g3_m1', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag3"});
-            new xGuard('g3_m2', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag3"});
+            // new xGuard('g3_l', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag3"});
+            // new xGuard('g3_h', spawn, {"type": "guard", "role": 'support', "flag": "Flag3"});
+            // new xGuard('g3_m1', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag3"});
+            // new xGuard('g3_m2', spawn, {"type": "guard", "role": 'mixed', "flag": "Flag3"});
 
             break;
    }
